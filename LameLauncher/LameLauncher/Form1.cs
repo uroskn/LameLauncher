@@ -238,25 +238,20 @@ namespace LameLauncher
                 {
                     ConsoleLogger.LogData("Jave ne najdem v PATH. Tole je ziher Windows.");
                     string progfiles = Environment.GetEnvironmentVariable("ProgramFiles");
-                    if (File.Exists(progfiles + "\\Java\\jre7\\bin\\java.exe"))
+                    string jpath = null;
+                    if (Directory.Exists(progfiles + "\\Java")) jpath = progfiles + "\\Java";
+                    else if (Directory.Exists(progfiles + " (x86)\\Java")) jpath = progfiles + " (x86)\\Java";
+                    if (jpath != null)
                     {
-                        javaname = progfiles + "\\Java\\jre7\\bin\\java.exe";
-                        hasjava = true;
-                    }
-                    if (File.Exists(progfiles + "\\Java\\jre6\\bin\\java.exe"))
-                    {
-                        javaname = progfiles + "\\Java\\jre6\\bin\\java.exe";
-                        hasjava = true;
-                    }
-                    if (File.Exists(progfiles + " (x86)\\Java\\jre7\\bin\\java.exe"))
-                    {
-                        javaname = progfiles + " (x86)\\Java\\jre7\\bin\\java.exe";
-                        hasjava = true;
-                    }
-                    if (File.Exists(progfiles + " (x86)\\Java\\jre6\\bin\\java.exe"))
-                    {
-                        javaname = progfiles + " (x86)\\Java\\jre6\\bin\\java.exe";
-                        hasjava = true;
+                        foreach (string path in Directory.GetDirectories(jpath))
+                        {
+                            if (File.Exists(path + "\\bin\\java.exe"))
+                            {
+                                javaname = path + "\\bin\\java.exe";
+                                hasjava = true;
+                                break;
+                            }
+                        }
                     }
                     if (hasjava) ConsoleLogger.LogData("Najdu javo v: " + javaname);
                     else ConsoleLogger.LogData("Ne najdem jave, fuck!");
