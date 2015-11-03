@@ -165,31 +165,8 @@ namespace LameLauncher
                         /* Ali pa crashni aplikacijo. Jup, to bi tudi šlo. */
                         Application.Exit();
                     }
-                    try
-                    {
-                        try { File.Delete("brisime"); }
-                        catch (Exception e) { };
-                        upd.DownloadFile("update", "brisime", false);
-                        File.Delete("brisime");
-                        // There apprently is a new update!
-                        // Check if minecraft.jar was tampered with
-                        if (config.GetValue("minecrafthash", "") != "")
-                        {
-                            if (upd.GetMD5HashFromFile("meinkraft.jar") != config.GetValue("minecrafthash", ""))
-                            {
-                                MessageBox.Show("Poskusal zagnati update, ampak zgleda, da je nekdo spreminjal meinkraft.jar!\n\n" +
-                                                "Prekinjam update, updejtaj na roke, kakor ves in znas!");
-                                throw new Exception("");
-                            }
-                        }
-                        UpdateWindow updater = new UpdateWindow();
-                        updater.upd = upd;
-                        upd.updwindow = updater;
-                        updater.RunUpdate();
-                    }
-                    catch (Exception e)
-                    {
-                    };
+                    while (testForMinecraftUpdate(upd)) 
+                      ConsoleLogger.LogData("Retesting for update...");
                 }
             }
             else
@@ -212,6 +189,33 @@ namespace LameLauncher
             }
             if (config.GetValue("autologin", "1") == "1") checkBox2.Checked = true;
             ConsoleLogger.LogData("Init koncan, fire away!", "Main");
+        }
+
+        private bool testForMinecraftUpdate(Updater upd)
+        {
+            try
+            {
+                upd.updwindow = null;
+                upd.DownloadFile("update", null, false);
+                // There apprently is a new update!
+                // Check if minecraft.jar was tampered with
+                if (config.GetValue("minecrafthash", "") != "")
+                {
+                    if (upd.GetMD5HashFromFile("meinkraft.jar") != config.GetValue("minecrafthash", ""))
+                    {
+                        MessageBox.Show("Poskusal zagnati update, ampak zgleda, da je nekdo spreminjal meinkraft.jar!\n\n" +
+                                        "Prekinjam update, updejtaj na roke, kakor ves in znas!");
+                        throw new Exception("");
+                    }
+                }
+                UpdateWindow updater = new UpdateWindow();
+                updater.upd = upd;
+                upd.updwindow = updater;
+                updater.RunUpdate();
+                return true;
+            }
+            catch (Exception e) { };
+            return false;
         }
 
         private void DetectJava()

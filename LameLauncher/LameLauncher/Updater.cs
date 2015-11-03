@@ -83,7 +83,8 @@ namespace LameLauncher
         public void GetHTTPFile(string url, string file, int tiemout, int maxtries)
         {
             if (File.Exists(file)) File.Delete(file);
-            Stream output = File.Create(file);
+            Stream output = null;
+            if (file != null) output = File.Create(file);
             bool close = true;
             int tries = 0;
             while (true) 
@@ -111,7 +112,7 @@ namespace LameLauncher
                         {
                             if (this.updwindow != null) this.updwindow.Invoke(updwindow.newprogress, Math.Round(((double)totalread / (double)response.ContentLength) * 100D, 3).ToString() + " %");
                         }
-                        if (count != 0)
+                        if ((count != 0) && (output != null))
                         {
                             output.Write(buffer, 0, count);
                         }
@@ -122,13 +123,13 @@ namespace LameLauncher
                 catch (Exception e)
                 {
                     close = false;
-                    output.Close();
+                    if (output != null) output.Close();
                     if ((this.updwindow != null) && (tries == 1)) this.updwindow.Invoke(updwindow.newprogress, "");
                     if (tries > maxtries) throw new Exception(e.Message, e);
                     else
                     {
                         File.Delete(file);
-                        output = File.Create(file);
+                        if (file != null) output = File.Create(file);
                         close = true;
                     }
                     ConsoleLogger.LogData("Download failo: " + e.Message, "GetHTTPFile");
@@ -136,7 +137,7 @@ namespace LameLauncher
             }
             if (close)
             {
-                output.Close();
+                if (output != null) output.Close();
                 if (this.updwindow != null) this.updwindow.Invoke(updwindow.newprogress, "");
             }
         }
@@ -213,6 +214,7 @@ namespace LameLauncher
             overrides.Clear();
             ExecuteCode(".temp", true);
             File.Delete(".temp");
+            this.updwindow = null;
         }
 
         public void ExecuteCode(string file, bool progress)
