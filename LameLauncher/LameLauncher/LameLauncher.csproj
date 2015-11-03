@@ -98,7 +98,6 @@
     <None Include="app.config" />
     <None Include="bg.jpg" />
     <None Include="Resources\caroot.pem" />
-    <None Include="Resources\launcher.cfg" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TNT.ico" />
