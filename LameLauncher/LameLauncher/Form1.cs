@@ -315,21 +315,23 @@ namespace LameLauncher
            label6.Show();
            timer2.Enabled = true;
            return;
-    }
+        }
 
-    private bool IsInputOK (string user, string password)
-    {
-    	byte[] bpasswd = Encoding.UTF8.GetBytes (password);
-    	if (bpasswd.Length > 60) {
-        ShowError ("Predolgo geslo (ne sme biti daljse od 60 znakov");
-        return false;
-    	}
-    	if (!System.Text.RegularExpressions.Regex.IsMatch (user, @"^[a-zA-Z0-9_]+$")) {
-        ShowError ("Uporabnisko ime vsebuje neveljavne znake!");
-        return false;
-    	}
-    	return true;
-    }
+        private bool IsInputOK (string user, string password)
+        {
+    	      byte[] bpasswd = Encoding.UTF8.GetBytes (password);
+    	      if (bpasswd.Length > 60) 
+            {
+                ShowError("Predolgo geslo (ne sme biti daljse od 60 znakov");
+                return false;
+    	      }
+    	      if (!System.Text.RegularExpressions.Regex.IsMatch(user, @"^[a-zA-Z0-9_]+$")) 
+            {
+                ShowError ("Uporabnisko ime vsebuje neveljavne znake!");
+                return false;
+    	      }
+    	      return true;
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
