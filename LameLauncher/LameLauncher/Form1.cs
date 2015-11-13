@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using System.IO;
 using System.Net;
 using System.Web;
+using System.Security.Cryptography;
+using System.Net.NetworkInformation;
 
 // Never bothered to rename it, do you mind?
 
@@ -28,6 +30,32 @@ namespace LameLauncher
         private string javaname;
         public static ConfigFile config;
         public static VarStorage variables;
+
+        private static string GetHash(string s)
+        {
+            MD5 sec = new MD5CryptoServiceProvider();
+            ASCIIEncoding enc = new ASCIIEncoding();
+            byte[] bt = enc.GetBytes(s);
+            return Updater.bytesToHash(sec.ComputeHash(bt));
+        }
+
+        public static string getFingerprint()
+        {
+            IPGlobalProperties computerProperties = IPGlobalProperties.GetIPGlobalProperties();
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            string interfaces = "";
+            if ((nics != null) && (nics.Length >= 1))
+            {
+                foreach (NetworkInterface adapter in nics)
+                {
+                    PhysicalAddress address = adapter.GetPhysicalAddress();
+                    byte[] bytes = address.GetAddressBytes();
+                    for (int i = 0; i < bytes.Length; i++) interfaces = interfaces + bytes[i].ToString("X2");
+                }
+            }
+            return GetHash(interfaces);
+        }
+
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
@@ -62,6 +90,7 @@ namespace LameLauncher
             if (hide) ConsoleLogger.debugscreen.Hide();
             this.KeyPreview = true;
             ConsoleLogger.LogData("LL " + Form1.version + " @ " + Environment.GetCommandLineArgs()[0], "Main");
+            ConsoleLogger.LogData("Environment fingerprint: " + getFingerprint());
             dec = -50;
             offline = false;
             hasjava = false;
@@ -337,12 +366,11 @@ namespace LameLauncher
         {
             if (!offline)
             {
-                byte[] bpasswd = Encoding.UTF8.GetBytes(textBox2.Text);
                 if (!IsInputOK(textBox1.Text, textBox2.Text)) return;
                 WebClient wc = new WebClient();
                 wc.Proxy = null;
                 ConsoleLogger.LogData("Poskusam auth...", "AuthBTN");
-                string result = wc.DownloadString("https://minecraft.knuples.net/auth.php?user=" + textBox1.Text + "&pass=" + textBox2.Text);
+                string result = wc.DownloadString("https://minecraft.knuples.net/auth.php?user=" + textBox1.Text + "&pass=" + textBox2.Text + "&hwid=" + getFingerprint());
                 if (result != "OK")
                 {
                     ConsoleLogger.LogData("Nope, ne bo slo", "AuthBTN");
@@ -421,7 +449,7 @@ namespace LameLauncher
                 ConsoleLogger.LogData("900 tickov preteklo, reauth!");
                 try
                 {
-                  wc.DownloadString("https://minecraft.knuples.net/auth.php?user=" + textBox1.Text + "&pass=" + textBox2.Text);
+                    wc.DownloadString("https://minecraft.knuples.net/auth.php?user=" + textBox1.Text + "&pass=" + textBox2.Text + "&hwid=" + getFingerprint());
                 }
                 catch (Exception ex)
                 {
@@ -452,7 +480,7 @@ namespace LameLauncher
             WebClient wc = new WebClient();
             wc.Proxy = null;
             ConsoleLogger.LogData("Poskusam ustvarit novega userja...");
-            string result = wc.DownloadString("https://minecraft.knuples.net/new.php?user=" + textBox1.Text + "&pass=" + textBox2.Text + "&mail=" + textBox3.Text);
+            string result = wc.DownloadString("https://minecraft.knuples.net/new.php?user=" + textBox1.Text + "&pass=" + textBox2.Text + "&mail=" + textBox3.Text + "&hwid=" + getFingerprint());
             ConsoleLogger.LogData("Dobil nazaj: " + result);
             if (result != "OK")
             {

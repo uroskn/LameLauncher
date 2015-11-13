@@ -22,19 +22,23 @@ namespace LameLauncher
         public UpdateWindow updwindow;
         private Dictionary<string, string> vars;
 
-        public string GetMD5HashFromFile(string fileName)
+        public static string bytesToHash(byte[] retVal)
         {
-            FileStream file = new FileStream(fileName, FileMode.Open);
-            MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] retVal = md5.ComputeHash(file);
-            file.Close();
-
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < retVal.Length; i++)
             {
                 sb.Append(retVal[i].ToString("x2"));
             }
             return sb.ToString();
+        }
+
+        public string GetMD5HashFromFile(string fileName)
+        {
+            FileStream file = new FileStream(fileName, FileMode.Open);
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] retVal = md5.ComputeHash(file);
+            file.Close();
+            return bytesToHash(retVal);
         }
 
         public Updater(string dir)
