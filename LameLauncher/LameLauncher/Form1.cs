@@ -10,6 +10,8 @@ using System.Net;
 using System.Web;
 using System.Security.Cryptography;
 using System.Net.NetworkInformation;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 // Never bothered to rename it, do you mind?
 
@@ -285,6 +287,34 @@ namespace LameLauncher
                 }
             };
         }
+            
+        // Shamelesly stolen from MSDN
+        private bool invalid_email;
+        public bool IsValidEmail(string strIn)
+        {
+            invalid_email = false;
+            if (String.IsNullOrEmpty(strIn)) return false;
+            try { strIn = Regex.Replace(strIn, @"(@)(.+)$", this.DomainMapper, RegexOptions.None); }
+            catch { return false; }
+            if (invalid_email) return false;
+            try {
+                return Regex.IsMatch(strIn,
+                    @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                    @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$",
+                    RegexOptions.IgnoreCase);
+            }
+            catch { return false; }
+        }
+
+        private string DomainMapper(Match match)
+        {
+            // IdnMapping class with default property values.
+            IdnMapping idn = new IdnMapping();
+            string domainName = match.Groups[2].Value;
+            try { domainName = idn.GetAscii(domainName); }
+            catch (ArgumentException) { invalid_email = true; }
+            return match.Groups[1].Value + domainName;
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -298,7 +328,8 @@ namespace LameLauncher
                 else button1.Enabled = true;
             }
             else button1.Enabled = false;
-            button2.Enabled = button1.Enabled;
+            if (!IsValidEmail(textBox3.Text)) button2.Enabled = false;
+            else button2.Enabled = button1.Enabled;
         }
 
         private void timer1_Tick(object sender, EventArgs e)

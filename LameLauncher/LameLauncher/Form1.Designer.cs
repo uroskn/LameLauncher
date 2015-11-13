@@ -223,6 +223,7 @@
             this.textBox3.Size = new System.Drawing.Size(142, 20);
             this.textBox3.TabIndex = 3;
             this.textBox3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox2_KeyPress);
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label5
             // 
