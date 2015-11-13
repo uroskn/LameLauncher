@@ -17,7 +17,7 @@ namespace LameLauncher
 {
     public partial class Form1 : Form
     {
-        public const string version = "151103";
+        public const string version = "151113";
         public const string launchargs = "-Xms512m -Xmx1024m -cp \"$CLASSPATH\" -Djava.library.path=\"$LLDIR\" net.minecraft.client.main.Main --username \"$USER\" --gameDir \"$LLDIR\" --assetsDir \"$LLDIR/assets\" --assetIndex LCWTF --version LCWTF $SERVERSTR --userProperties '{}' --accessToken 123";
 
         private int ticks;
