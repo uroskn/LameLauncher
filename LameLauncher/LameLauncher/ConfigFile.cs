@@ -41,12 +41,10 @@ namespace LameLauncher
                     {
                         data.Add(results[0], results[1]);
                     }
-                    catch (Exception e) { };
+                    catch { };
                 }
             }
-            catch (Exception e)
-            {
-            }
+            catch { }
         }
 
         public void SetValue(string key, string value)

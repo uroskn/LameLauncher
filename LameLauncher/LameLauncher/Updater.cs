@@ -11,7 +11,6 @@ namespace LameLauncher
     public class Updater
     {
         public int UpdateSize;
-        private string appdir;
         public int UpdateOK;
         public string ActionName;
         public int totalcommmands;
@@ -43,7 +42,6 @@ namespace LameLauncher
 
         public Updater(string dir)
         {
-            this.appdir = dir;
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             Directory.SetCurrentDirectory(dir);
             vars = new Dictionary<string, string>();
@@ -60,7 +58,7 @@ namespace LameLauncher
             {
                 ExecuteCode("mirrors", false);
             }
-            catch (Exception e)
+            catch
             {
                 this.ResetMirrors();
             }
@@ -289,7 +287,7 @@ namespace LameLauncher
                         string md5sum = this.GetMD5HashFromFile(commands[1]);
                         if (md5sum == commands[2]) md5match = true;
                     }
-                    catch (Exception e) { }
+                    catch { }
                     if (md5match)
                     {
                         this.UpdateStatus("Ze imam fajl: " + commands[1] + ", skip...");
@@ -340,7 +338,7 @@ namespace LameLauncher
                         this.UpdateStatus("Ustvarjam mapo " + commands[1]);
                         Directory.CreateDirectory(commands[1]);
                     }
-                    catch (Exception e) { };
+                    catch { };
                 }
                 if (commands[0] == "DEL")
                 {
@@ -362,13 +360,13 @@ namespace LameLauncher
                         this.UpdateStatus("Dodajam override za " + commands[1] + "...");
                         overrides.Add(commands[1], commands[2]);
                     }
-                    catch (Exception e) { };
+                    catch { };
                 }
-				        if (commands[0] == "SETCFG")
-				        {
-					        Form1.config.SetValue(commands[1], commands[2]);
-					        Form1.config.FlushConfig();
-				        }
+				if (commands[0] == "SETCFG")
+				{
+				    Form1.config.SetValue(commands[1], commands[2]);
+					Form1.config.FlushConfig();
+				}
                 if (commands[0] == "EXIT")
                 {
                     this.UpdateOK = -2;
@@ -385,8 +383,6 @@ namespace LameLauncher
                 }
                 if (commands[0] == "RESTART")
                 {
-                    string command = "LameLauncher.exe";
-                    if (IsLoonix()) command = "mono LameLauncher.exe";
                     System.Diagnostics.Process process = new System.Diagnostics.Process();
                     System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
                     startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
@@ -442,7 +438,7 @@ namespace LameLauncher
                 if (this.GetVar("VERSION") != "") return this.GetVar("VERSION");
                 return File.ReadAllText("cversion");
             }
-            catch (Exception e)
+            catch
             {
                 return "0";
             }

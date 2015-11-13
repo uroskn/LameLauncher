@@ -41,7 +41,6 @@ namespace LameLauncher
 
         public static string getFingerprint()
         {
-            IPGlobalProperties computerProperties = IPGlobalProperties.GetIPGlobalProperties();
             NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
             string interfaces = "";
             if ((nics != null) && (nics.Length >= 1))
@@ -121,12 +120,7 @@ namespace LameLauncher
             ConsoleLogger.LogData("OS: " + os, "Main");
             ConsoleLogger.LogData("MCIP: " + installpath, "Main");
             ConsoleLogger.LogData("TMP: " + tempdir, "Main");
-            bool created = false;
-            if (!Directory.Exists(installpath))
-            {
-                Directory.CreateDirectory(installpath);
-                created = true;
-            }
+            if (!Directory.Exists(installpath)) Directory.CreateDirectory(installpath);
             Directory.SetCurrentDirectory(installpath);
             config = new ConfigFile("launcher.cfg");
             label4.Text = "LameLauncher version: " + version + ", Minecraft: " + upd.GetCurrentVersion() + ", " + os;
@@ -181,7 +175,7 @@ namespace LameLauncher
                         Application.Exit();
                         Environment.Exit(0);
                     }
-                    catch (Exception ef) { 
+                    catch { 
                         /** WTF JE BLO TO, SHIT, SHIT, SHIT, DO TEGA NEBI SMELO PRIT!
                             Konec je z nami, fertik smo, adijo, zbrisi system32 in zvali krivdo
                             na Windowse. Po možnosti poišči še vse .doc in .jpg fajle in jih zbriši,
@@ -243,7 +237,7 @@ namespace LameLauncher
                 updater.RunUpdate();
                 return true;
             }
-            catch (Exception e) { };
+            catch { };
             return false;
         }
 
@@ -263,7 +257,7 @@ namespace LameLauncher
                 hasjava = true;
                 ConsoleLogger.LogData("Java in PATH, good.", 1);
             }
-            catch (Exception e) 
+            catch
             {
                 // No java? That's bad. Windows mogoc? PATH fucked up?
                 // Ker to je Windows, kjer je cudez da kaj dejansko dela po planu!
@@ -346,20 +340,20 @@ namespace LameLauncher
            return;
         }
 
-        private bool IsInputOK (string user, string password)
+        private bool IsInputOK(string user, string password)
         {
-    	      byte[] bpasswd = Encoding.UTF8.GetBytes (password);
-    	      if (bpasswd.Length > 60) 
+    	    byte[] bpasswd = Encoding.UTF8.GetBytes (password);
+    	    if (bpasswd.Length > 60) 
             {
                 ShowError("Predolgo geslo (ne sme biti daljse od 60 znakov");
                 return false;
-    	      }
-    	      if (!System.Text.RegularExpressions.Regex.IsMatch(user, @"^[a-zA-Z0-9_]+$")) 
+    	    }
+    	    if (!System.Text.RegularExpressions.Regex.IsMatch(user, @"^[a-zA-Z0-9_]+$")) 
             {
                 ShowError ("Uporabnisko ime vsebuje neveljavne znake!");
                 return false;
-    	      }
-    	      return true;
+    	    }
+    	    return true;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -397,16 +391,8 @@ namespace LameLauncher
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
-            string fd = "\\";
             string ds = ";";
-            string ld = "";
-            string servstr = "";
-            if (loonix)
-            {
-                fd = "/";
-                ds = ":";
-                ld = "/";
-            }
+            if (loonix) ds = ":";
             variables.SetValue("serverstr", "");
             if ((checkBox2.Checked) && (!offline)) variables.SetValue("serverstr", " --server server.minecraft.knuples.net");
             string classpath = "";
