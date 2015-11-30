@@ -326,7 +326,7 @@ namespace LameLauncher
                 if (commands[0] == "DEL")
                 {
                     this.UpdateStatus("Brisem " + commands[1]);
-                    if (Directory.Exists(commands[1])) Directory.Delete(commands[1]);
+                    if (Directory.Exists(commands[1])) Directory.Delete(commands[1], true);
                     else File.Delete(commands[1]);
                 }
                 if (commands[0] == "COMMIT")
