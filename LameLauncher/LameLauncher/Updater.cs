@@ -47,21 +47,9 @@ namespace LameLauncher
             vars = new Dictionary<string, string>();
             overrides = new Dictionary<string, string>();
             mirrorlist = new List<string>();
-            this.ReloadMirrors();
+            this.ResetMirrors();
             this.UpdateOK = -1;
             this.updwindow = null;
-        }
-
-        public void ReloadMirrors()
-        {
-            try
-            {
-                ExecuteCode("mirrors", false);
-            }
-            catch
-            {
-                this.ResetMirrors();
-            }
         }
 
         public string GetCurrentMirror()
@@ -313,11 +301,6 @@ namespace LameLauncher
                 if (commands[0] == "SET")
                 {
                     this.SetVar(commands[1], commands[2]);
-                }
-                if (commands[0] == "RELOADMIRRORS")
-                {
-                    this.UpdateStatus("Reloadam mirror fajl!");
-                    this.ReloadMirrors();
                 }
                 if (commands[0] == "CLEARMIRRORS")
                 {
