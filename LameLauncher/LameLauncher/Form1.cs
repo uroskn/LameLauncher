@@ -20,7 +20,6 @@ namespace LameLauncher
     public partial class Form1 : Form
     {
         public const string version = "151113";
-        public const string launchargs = "-Xms512m -Xmx1024m -cp \"$CLASSPATH\" -Djava.library.path=\"$LLDIR\" net.minecraft.client.main.Main --username \"$USER\" --gameDir \"$LLDIR\" --assetsDir \"$LLDIR/assets\" --assetIndex LCWTF --version LCWTF $SERVERSTR --userProperties '{}' --accessToken 123";
 
         private int ticks;
         private int dec;
@@ -433,7 +432,7 @@ namespace LameLauncher
                 if (files[i].Substring(files[i].Length - 4) == ".jar") classpath = classpath + files[i] + ds;
             }
             variables.SetValue("classpath", classpath);
-            string lnchargs = config.GetValue("launchargs", launchargs);
+            string lnchargs = config.GetValue("launchargs", "");
             ConsoleLogger.LogData("CONFIGARGS: " + lnchargs, "AuthBTN");
             variables.SetValue("user", textBox1.Text);
             startInfo.Arguments = variables.ProcessString(lnchargs);
