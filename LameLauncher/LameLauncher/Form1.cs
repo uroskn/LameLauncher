@@ -189,8 +189,17 @@ namespace LameLauncher
                         /* Ali pa crashni aplikacijo. Jup, to bi tudi šlo. */
                         Application.Exit();
                     }
-                    while (testForMinecraftUpdate(upd)) 
-                      ConsoleLogger.LogData("Retesting for update...");
+                    int ntries = 0;
+                    while (testForMinecraftUpdate(upd))
+                    {
+                        ntries++;
+                        ConsoleLogger.LogData("Retesting for update...");
+                        if (ntries > 10)
+                        {
+                            MessageBox.Show("Dal že deset iteracij poskusa updejta skozi. Nekaj je hudo narobe.\nProsim kontaktiraj admine!");
+                            Application.Exit();
+                        }
+                    }
                 }
             }
             else
