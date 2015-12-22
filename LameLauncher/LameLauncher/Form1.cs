@@ -19,7 +19,7 @@ namespace LameLauncher
 {
     public partial class Form1 : Form
     {
-        public const string version = "151113";
+        public const string version = "151222";
 
         private int ticks;
         private int dec;
