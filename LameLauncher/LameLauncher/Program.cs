@@ -27,7 +27,13 @@ namespace LameLauncher
                 delegate(object appsend, X509Certificate certificate, X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
                 {
                     var caroot = new X509Certificate(LameLauncher.Properties.Resources.caroot);
-                    return (caroot.Issuer == certificate.Issuer);
+                    if (caroot.Issuer == certificate.Issuer) return true;
+                    if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None)
+                        return true;
+                    if ((Form1.config != null) && (Form1.config.GetValue("ignoressl", "0") == "1")) return true;
+                    ConsoleLogger.LogData("Certificate error: " + sslPolicyErrors.ToString(), "Program");
+                    ConsoleLogger.LogData("Fault certificate: " + certificate.ToString(), "Program");
+                    return false;
                 };
 
             Application.EnableVisualStyles();
