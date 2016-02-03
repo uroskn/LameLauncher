@@ -31,11 +31,11 @@ namespace LameLauncher
             return sb.ToString();
         }
 
-        public string GetMD5HashFromFile(string fileName)
+        public string GetSHAHashFromFile(string fileName)
         {
             FileStream file = new FileStream(fileName, FileMode.Open);
-            MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] retVal = md5.ComputeHash(file);
+            SHA256 sha256 = new SHA256CryptoServiceProvider();
+            byte[] retVal = sha256.ComputeHash(file);
             file.Close();
             return bytesToHash(retVal);
         }
@@ -269,14 +269,14 @@ namespace LameLauncher
                 if (commands[0] == "--") continue;
                 if (commands[0] == "ADD")
                 {
-                    bool md5match = false;
+                    bool shamatch = false;
                     try
                     {
-                        string md5sum = this.GetMD5HashFromFile(commands[1]);
-                        if (md5sum == commands[2]) md5match = true;
+                        string shasum = this.GetSHAHashFromFile(commands[1]);
+                        if (shasum == commands[2]) shamatch = true;
                     }
                     catch { }
-                    if (md5match)
+                    if (shamatch)
                     {
                         this.UpdateStatus("Ze imam fajl: " + commands[1] + ", skip...");
                         continue;

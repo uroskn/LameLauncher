@@ -234,7 +234,7 @@ namespace LameLauncher
                 // Check if minecraft.jar was tampered with
                 if (config.GetValue("minecrafthash", "") != "")
                 {
-                    if (upd.GetMD5HashFromFile("meinkraft.jar") != config.GetValue("minecrafthash", ""))
+                    if (upd.GetSHAHashFromFile("meinkraft.jar") != config.GetValue("minecrafthash", ""))
                     {
                         MessageBox.Show("Poskusal zagnati update, ampak zgleda, da je nekdo spreminjal meinkraft.jar!\n\n" +
                                         "Prekinjam update, updejtaj na roke, kakor ves in znas!");
