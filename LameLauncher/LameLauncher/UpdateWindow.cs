@@ -16,12 +16,14 @@ namespace LameLauncher
         public delegate void CloseWindow();
         public delegate void UpdateStatus(string status);
         public delegate void UpdateProgressText(string text);
+        public delegate void UpdateAddMaxTicks(int ticks);
 
         public UpdateMaxTicks maxticks;
         public UpdateTick newtick;
         public UpdateStatus setstatus;
         public CloseWindow weredone;
         public UpdateProgressText newprogress;
+        public UpdateAddMaxTicks addticks;
 
         public Updater upd;
         public bool runthread;
@@ -51,6 +53,12 @@ namespace LameLauncher
             this.progressBar1.Refresh();
         }
 
+        public void AddMaxTicks(int ticks)
+        {
+            this.progressBar1.Maximum = this.progressBar1.Maximum + ticks;
+            this.progressBar1.Refresh();
+        }
+
         public void SetMaxTicks(int tick)
         {
             this.progressBar1.Value = 0;
@@ -76,6 +84,7 @@ namespace LameLauncher
             setstatus = new UpdateStatus(this.NewStatus);
             weredone = new CloseWindow(this.Done);
             newprogress = new UpdateProgressText(this.setspeed);
+            addticks = new UpdateAddMaxTicks(this.maxticks);
             runthread = false;
             this.KeyPreview = true;
         }
