@@ -259,28 +259,78 @@ namespace LameLauncher
                 if (progress) this.updwindow.Invoke(updwindow.newtick);
                 List<string> commands = TokenizeLine(line);
                 if (commands[0] == "--") continue;
-                if (commands[0] == "ADD")
+                bool canfail = false;
+                if (commands[0] == "CANFAIL")
                 {
-                    bool shamatch = false;
-                    try
+                    canfail = true;
+                    commands.RemoveAt(0);
+                }
+                try
+                {
+                    if (commands[0] == "ADD")
                     {
-                        string shasum = this.GetSHAHashFromFile(commands[1]);
-                        if (shasum == commands[2]) shamatch = true;
-                    }
-                    catch { }
-                    if (shamatch)
-                    {
-                        this.UpdateStatus("Ze imam fajl: " + commands[1] + ", skip...");
-                        continue;
-                    }
-                    try
-                    {
+                        bool shamatch = false;
+                        if (File.Exists(commands[1]))
+                        {
+                            string shasum = this.GetSHAHashFromFile(commands[1]);
+                            if (shasum == commands[2]) shamatch = true;
+                        }
+                        if (shamatch)
+                        {
+                            this.UpdateStatus("Ze imam fajl: " + commands[1] + ", skip...");
+                            continue;
+                        }
                         DownloadFile(commands[1], commands[1]);
                     }
-                    catch (Exception e)
+                    if (commands[0] == "SET")
                     {
-                        this.UpdateStatus("Download failo, preklic!");
-                        ConsoleLogger.LogData(e.Message, "ExecuteCode");
+                        this.SetVar(commands[1], commands[2]);
+                    }
+                    if (commands[0] == "CLEARMIRRORS")
+                    {
+                        this.UpdateStatus("Spucal vse mirrorje");
+                        this.mirrorlist.Clear();
+                        this.mirrors.Clear();
+                    }
+                    if (commands[0] == "MIRROR")
+                    {
+                        this.mirrors.Add(commands[1], commands[2]);
+                        this.mirrorlist.Add(commands[1]);
+                        this.UpdateStatus("Dodajam nov mirror: " + commands[2] + ", ID: " + this.FindMirrorIndex(commands[1]).ToString());
+                    }
+                    if (commands[0] == "MKDIR")
+                    {
+                        this.UpdateStatus("Ustvarjam mapo " + commands[1]);
+                        Directory.CreateDirectory(commands[1]);
+                    }
+                    if (commands[0] == "DEL")
+                    {
+                        this.UpdateStatus("Brisem " + commands[1]);
+                        if (Directory.Exists(commands[1])) Directory.Delete(commands[1], true);
+                        else File.Delete(commands[1]);
+                    }
+                    if (commands[0] == "COMMIT")
+                    {
+                        this.UpdateStatus("Koncujem update...");
+                        File.WriteAllText("cversion", this.GetVar("VERSION"));
+                        this.UpdateStatus("Done");
+                    }
+                    if (commands[0] == "OVERRIDE")
+                    {
+                        try
+                        {
+                            this.UpdateStatus("Dodajam override za " + commands[1] + "...");
+                            overrides.Add(commands[1], commands[2]);
+                        }
+                        catch { };
+                    }
+    				if (commands[0] == "SETCFG")
+    				{
+    				    Form1.config.SetValue(commands[1], commands[2]);
+    					Form1.config.FlushConfig();
+    				}
+                    if (commands[0] == "EXIT")
+                    {
                         if (progress)
                         {
                             System.Threading.Thread.Sleep(1000);
@@ -288,81 +338,26 @@ namespace LameLauncher
                         }
                         return;
                     }
-                }
-                if (commands[0] == "SET")
-                {
-                    this.SetVar(commands[1], commands[2]);
-                }
-                if (commands[0] == "CLEARMIRRORS")
-                {
-                    this.UpdateStatus("Spucal vse mirrorje");
-                    this.mirrorlist.Clear();
-                    this.mirrors.Clear();
-                }
-                if (commands[0] == "MIRROR")
-                {
-                    this.mirrors.Add(commands[1], commands[2]);
-                    this.mirrorlist.Add(commands[1]);
-                    this.UpdateStatus("Dodajam nov mirror: " + commands[2] + ", ID: " + this.FindMirrorIndex(commands[1]).ToString());
-                }
-                if (commands[0] == "MKDIR")
-                {
-                    try
+                    if (commands[0] == "RENAME")
                     {
-                        this.UpdateStatus("Ustvarjam mapo " + commands[1]);
-                        Directory.CreateDirectory(commands[1]);
+                        File.Move(commands[1], commands[2]);
                     }
-                    catch { };
-                }
-                if (commands[0] == "DEL")
-                {
-                    this.UpdateStatus("Brisem " + commands[1]);
-                    if (Directory.Exists(commands[1])) Directory.Delete(commands[1], true);
-                    else File.Delete(commands[1]);
-                }
-                if (commands[0] == "COMMIT")
-                {
-                    this.UpdateStatus("Koncujem update...");
-                    File.WriteAllText("cversion", this.GetVar("VERSION"));
-                    this.UpdateStatus("Done");
-                }
-                if (commands[0] == "OVERRIDE")
-                {
-                    try
+                    if (commands[0] == "RESTART")
                     {
-                        this.UpdateStatus("Dodajam override za " + commands[1] + "...");
-                        overrides.Add(commands[1], commands[2]);
+                        System.Diagnostics.Process process = new System.Diagnostics.Process();
+                        System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                        startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                        startInfo.FileName = commands[1];
+                        startInfo.UseShellExecute = true;
+                        process.StartInfo = startInfo;
+                        process.Start();
+                        Environment.Exit(0);
                     }
-                    catch { };
                 }
-				if (commands[0] == "SETCFG")
-				{
-				    Form1.config.SetValue(commands[1], commands[2]);
-					Form1.config.FlushConfig();
-				}
-                if (commands[0] == "EXIT")
+                catch (Exception e)
                 {
-                    if (progress)
-                    {
-                        System.Threading.Thread.Sleep(1000);
-                        this.updwindow.Invoke(updwindow.weredone);
-                    }
-                    return;
-                }
-                if (commands[0] == "RENAME")
-                {
-                    File.Move(commands[1], commands[2]);
-                }
-                if (commands[0] == "RESTART")
-                {
-                    System.Diagnostics.Process process = new System.Diagnostics.Process();
-                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-                    startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    startInfo.FileName = commands[1];
-                    startInfo.UseShellExecute = true;
-                    process.StartInfo = startInfo;
-                    process.Start();
-                    Environment.Exit(0);
+                    if (progress) this.UpdateStatus("ERROR: " + e.Message);
+                    if (!canfail) throw e;
                 }
             }
             if (progress)
