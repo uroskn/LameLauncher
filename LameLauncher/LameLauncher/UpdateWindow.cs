@@ -26,6 +26,9 @@ namespace LameLauncher
         public Updater upd;
         public bool runthread;
 
+        public bool update_success;
+        public string update_error;
+
         private Thread thrd;
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -81,6 +84,8 @@ namespace LameLauncher
         {
             this.label2.Text = "";
             SetMaxTicks(0);
+            update_success = false;
+            update_error = "";
             thrd = new Thread(upd.UpdateMinecraft);
             runthread = true;
             this.ShowDialog();

@@ -245,6 +245,11 @@ namespace LameLauncher
                 updater.upd = upd;
                 upd.updwindow = updater;
                 updater.RunUpdate();
+                if (!updater.update_success)
+                {
+                    MessageBox.Show("Update neuspešen. Zadnja napaka: " + updater.update_error + "\nZa dodatna pojasnila prosim kontaktiraj admine!");
+                    Application.Exit();
+                }
                 return true;
             }
             catch { };

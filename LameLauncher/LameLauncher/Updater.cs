@@ -348,12 +348,18 @@ namespace LameLauncher
                 catch (Exception e)
                 {
                     if (progress) this.UpdateStatus("ERROR: " + e.Message);
-                    if (!canfail) throw e;
+                    if (!canfail)
+                    {
+                        if (progress) this.updwindow.update_error = e.Message;
+                        System.Threading.Thread.Sleep(1000);
+                        this.updwindow.Invoke(updwindow.weredone);
+                    }
                 }
             }
             if (progress)
             {
                 System.Threading.Thread.Sleep(1000);
+                this.updwindow.update_success = true;
                 this.updwindow.Invoke(updwindow.weredone);
             }
         }
