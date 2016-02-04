@@ -329,15 +329,6 @@ namespace LameLauncher
     				    Form1.config.SetValue(commands[1], commands[2]);
     					Form1.config.FlushConfig();
     				}
-                    if (commands[0] == "EXIT")
-                    {
-                        if (progress)
-                        {
-                            System.Threading.Thread.Sleep(1000);
-                            this.updwindow.Invoke(updwindow.weredone);
-                        }
-                        return;
-                    }
                     if (commands[0] == "RENAME")
                     {
                         File.Move(commands[1], commands[2]);
