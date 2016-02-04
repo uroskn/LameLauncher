@@ -10,11 +10,6 @@ namespace LameLauncher
 
     public class Updater
     {
-        public int UpdateSize;
-        public int UpdateOK;
-        public string ActionName;
-        public int totalcommmands;
-        public int currentcommand;
         private Dictionary<string, string> mirrors;
         private Dictionary<string, string> overrides;
         private List<string> mirrorlist;
@@ -48,7 +43,6 @@ namespace LameLauncher
             overrides = new Dictionary<string, string>();
             mirrorlist = new List<string>();
             this.ResetMirrors();
-            this.UpdateOK = -1;
             this.updwindow = null;
         }
 
@@ -197,7 +191,6 @@ namespace LameLauncher
 
         public void UpdateMinecraft()
         {
-            this.UpdateOK = -1;
             this.UpdateStatus("Updajtam iz verzije: " + this.GetCurrentVersion());
             this.DownloadFile("ver", ".temp");
             this.UpdateStatus("Zaganjam update file...");
@@ -251,7 +244,6 @@ namespace LameLauncher
 
         public void UpdateStatus(string status)
         {
-            this.ActionName = status;
             if (this.updwindow != null)
             {
                 this.updwindow.Invoke(updwindow.setstatus, status);
@@ -287,7 +279,6 @@ namespace LameLauncher
                     }
                     catch (Exception e)
                     {
-                        this.UpdateOK = 0;
                         this.UpdateStatus("Download failo, preklic!");
                         ConsoleLogger.LogData(e.Message, "ExecuteCode");
                         if (progress)
@@ -333,7 +324,6 @@ namespace LameLauncher
                 {
                     this.UpdateStatus("Koncujem update...");
                     File.WriteAllText("cversion", this.GetVar("VERSION"));
-                    this.UpdateOK = 1;
                     this.UpdateStatus("Done");
                 }
                 if (commands[0] == "OVERRIDE")
@@ -352,7 +342,6 @@ namespace LameLauncher
 				}
                 if (commands[0] == "EXIT")
                 {
-                    this.UpdateOK = -2;
                     if (progress)
                     {
                         System.Threading.Thread.Sleep(1000);
