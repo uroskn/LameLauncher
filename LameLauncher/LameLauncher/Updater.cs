@@ -214,12 +214,12 @@ namespace LameLauncher
             bool searchingbegin = true;
             for (int i = 0; i < line.Length; i++)
             {
-				        if ((line[i] == '\\') && (isinsidequotes)) 
-				        {
-					        i++;
-					        tmpres = tmpres + line[i];
-					        continue;
-				        }
+				if ((line[i] == '\\') && (isinsidequotes)) 
+				{
+				      i++;
+					  tmpres = tmpres + line[i];
+					  continue;
+				}
                 if ((line[i] == ' ') && (searchingbegin)) continue;
                 if ((line[i] == ' ') && (!searchingbegin) && (!isinsidequotes))
                 {
