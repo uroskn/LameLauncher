@@ -29,8 +29,8 @@ namespace LameLauncher
         public string GetSHAHashFromFile(string fileName)
         {
             FileStream file = new FileStream(fileName, FileMode.Open);
-            SHA256 sha256 = new SHA256CryptoServiceProvider();
-            byte[] retVal = sha256.ComputeHash(file);
+            SHA1 sha1 = new SHA1CryptoServiceProvider();
+            byte[] retVal = sha1.ComputeHash(file);
             file.Close();
             return bytesToHash(retVal);
         }
@@ -200,10 +200,20 @@ namespace LameLauncher
             this.updwindow = null;
         }
 
-        public void ExecuteCode(string file, bool progress)
+        public void ExecuteCode(string file, bool progress, bool update_ticks, bool close_window)
         {
             string[] lines = File.ReadAllLines(file);
-            this.ExecuteCode(lines, progress);
+            if (progress)
+            {
+                if (update_ticks) this.updwindow.Invoke(updwindow.maxticks, lines.Length);
+                else this.updwindow.Invoke(updwindow.addticks, lines.Length);
+            }
+            this.ExecuteCode(lines, progress, close_window);
+        }
+
+        public void ExecuteCode(string file, bool progress)
+        {
+            this.ExecuteCode(file, progress, true, true);
         }
 
         public static List<string> TokenizeLine(string line)
@@ -251,9 +261,8 @@ namespace LameLauncher
             ConsoleLogger.LogData(status, 2);
         }
 
-        public void ExecuteCode(string[] code, bool progress)
+        public void ExecuteCode(string[] code, bool progress, bool close_window)
         {
-            if (progress) this.updwindow.Invoke(updwindow.maxticks, code.Length);
             foreach (string line in code)
             {
                 if (progress) this.updwindow.Invoke(updwindow.newtick);
@@ -267,6 +276,13 @@ namespace LameLauncher
                 }
                 try
                 {
+                    if (commands[0] == "EXECUTE")
+                    {
+                        this.UpdateStatus("Zaganjam command file " + commands[1]);
+                        this.ExecuteCode(commands[1], progress, false, false);
+                        if ((progress) && (this.updwindow.update_error != ""))
+                            throw new Exception(this.updwindow.update_error);
+                    }
                     if (commands[0] == "ADD")
                     {
                         bool shamatch = false;
@@ -356,7 +372,7 @@ namespace LameLauncher
                     }
                 }
             }
-            if (progress)
+            if ((progress) && (close_window))
             {
                 System.Threading.Thread.Sleep(1000);
                 this.updwindow.update_success = true;

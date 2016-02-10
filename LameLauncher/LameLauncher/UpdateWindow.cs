@@ -55,7 +55,7 @@ namespace LameLauncher
 
         public void AddMaxTicks(int ticks)
         {
-            this.progressBar1.Maximum = this.progressBar1.Maximum + ticks;
+            this.progressBar1.Maximum = this.progressBar1.Maximum + ticks + 1;
             this.progressBar1.Refresh();
         }
 
@@ -84,7 +84,7 @@ namespace LameLauncher
             setstatus = new UpdateStatus(this.NewStatus);
             weredone = new CloseWindow(this.Done);
             newprogress = new UpdateProgressText(this.setspeed);
-            addticks = new UpdateAddMaxTicks(this.maxticks);
+            addticks = new UpdateAddMaxTicks(this.AddMaxTicks);
             runthread = false;
             this.KeyPreview = true;
         }
