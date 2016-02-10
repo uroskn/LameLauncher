@@ -274,6 +274,16 @@ namespace LameLauncher
                     canfail = true;
                     commands.RemoveAt(0);
                 }
+                if (commands[0] == "IFLOONIX")
+                {
+                    commands.RemoveAt(0);
+                    if (!Updater.IsLoonix()) continue;
+                }
+                if (commands[0] == "IFWIN")
+                {
+                    commands.RemoveAt(0);
+                    if (Updater.IsLoonix()) continue;
+                }
                 try
                 {
                     if (commands[0] == "EXECUTE")
