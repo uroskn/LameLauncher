@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C9C9DE1E-1C01-4297-855F-AF7527AE5753}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -14,6 +14,8 @@
     <TargetFrameworkSubset>
     </TargetFrameworkSubset>
     <ApplicationIcon>TNT.ico</ApplicationIcon>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -93,6 +95,7 @@
       <DependentUpon>UpdateWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="VarStorage.cs" />
+    <Compile Include="ZipStorer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -119,5 +122,6 @@
         </Policies>
       </Properties>
     </MonoDevelop>
+    <VisualStudio />
   </ProjectExtensions>
 </Project>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 
@@ -292,6 +293,22 @@ namespace LameLauncher
                         this.ExecuteCode(commands[1], progress, false, false);
                         if ((progress) && (this.updwindow.update_error != ""))
                             throw new Exception(this.updwindow.update_error);
+                    }
+                    if (commands[0] == "EXTRACT")
+                    {
+                        ZipStorer zip = ZipStorer.Open(commands[1], FileAccess.Read);
+                        List<ZipStorer.ZipFileEntry> dir = zip.ReadCentralDir();
+                        bool success = false;
+                        foreach (ZipStorer.ZipFileEntry entry in dir)
+                        {
+                            if (entry.FilenameInZip == commands[2])
+                            {
+                                zip.ExtractFile(entry, commands[3]);
+                                success = true;
+                                break;
+                            }
+                        }
+                        if (!success) throw new Exception("File does not exists!");
                     }
                     if (commands[0] == "ADD")
                     {
