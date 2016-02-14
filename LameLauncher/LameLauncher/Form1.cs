@@ -104,6 +104,7 @@ namespace LameLauncher
                 fd = "/";
                 os = "Linux";
             }
+            variables.SetValue("fd", fd);
             string installpath = "";
             string tempdir = "";
             if (!loonix)
