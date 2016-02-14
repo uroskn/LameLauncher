@@ -302,6 +302,7 @@ namespace LameLauncher
                     }
                     if (commands[0] == "EXTRACT")
                     {
+                        this.UpdateStatus("Extractam file '" + commands[2] + "' iz '" + commands[1] + "' v '" + commands[3] + "'");
                         ZipStorer zip = ZipStorer.Open(commands[1], FileAccess.Read);
                         List<ZipStorer.ZipFileEntry> dir = zip.ReadCentralDir();
                         bool success = false;
@@ -315,6 +316,7 @@ namespace LameLauncher
                             }
                         }
                         if (!success) throw new Exception("File does not exists!");
+                        zip.Close();
                     }
                     if (commands[0] == "ADD")
                     {
