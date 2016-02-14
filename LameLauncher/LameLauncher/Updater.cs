@@ -16,6 +16,7 @@ namespace LameLauncher
         private List<string> mirrorlist;
         public UpdateWindow updwindow;
         private Dictionary<string, string> vars;
+        public bool progress;
 
         public static string bytesToHash(byte[] retVal)
         {
@@ -196,12 +197,13 @@ namespace LameLauncher
             this.DownloadFile("ver", ".temp");
             this.UpdateStatus("Zaganjam update file...");
             overrides.Clear();
-            ExecuteCode(".temp", true);
+            this.progress = true;
+            ExecuteCode(".temp");
             File.Delete(".temp");
             this.updwindow = null;
         }
 
-        public void ExecuteCode(string file, bool progress, bool update_ticks, bool close_window)
+        public void ExecuteCode(string file, bool update_ticks, bool close_window)
         {
             string[] lines = File.ReadAllLines(file);
             if (progress)
@@ -209,12 +211,12 @@ namespace LameLauncher
                 if (update_ticks) this.updwindow.Invoke(updwindow.maxticks, lines.Length);
                 else this.updwindow.Invoke(updwindow.addticks, lines.Length);
             }
-            this.ExecuteCode(lines, progress, close_window);
+            this.ExecuteCode(lines, close_window);
         }
 
-        public void ExecuteCode(string file, bool progress)
+        public void ExecuteCode(string file)
         {
-            this.ExecuteCode(file, progress, true, true);
+            this.ExecuteCode(file, true, true);
         }
 
         public static List<string> TokenizeLine(string line)
@@ -257,12 +259,16 @@ namespace LameLauncher
         {
             if (this.updwindow != null)
             {
-                this.updwindow.Invoke(updwindow.setstatus, status);
+                try
+                {
+                    this.updwindow.Invoke(updwindow.setstatus, status);
+                }
+                catch (Exception e) { }
             }
             ConsoleLogger.LogData(status, 2);
         }
 
-        public void ExecuteCode(string[] code, bool progress, bool close_window)
+        public void ExecuteCode(string[] code, bool close_window)
         {
             foreach (string line in code)
             {
@@ -290,7 +296,7 @@ namespace LameLauncher
                     if (commands[0] == "EXECUTE")
                     {
                         this.UpdateStatus("Zaganjam command file " + commands[1]);
-                        this.ExecuteCode(commands[1], progress, false, false);
+                        this.ExecuteCode(commands[1], false, false);
                         if ((progress) && (this.updwindow.update_error != ""))
                             throw new Exception(this.updwindow.update_error);
                     }
@@ -393,9 +399,14 @@ namespace LameLauncher
                     if (progress) this.UpdateStatus("ERROR: " + e.Message);
                     if (!canfail)
                     {
-                        if (progress) this.updwindow.update_error = e.Message;
                         System.Threading.Thread.Sleep(1000);
-                        this.updwindow.Invoke(updwindow.weredone);
+                        if (progress)
+                        {
+                            this.progress = false;
+                            this.updwindow.Invoke(updwindow.weredone);
+                        }
+                        this.updwindow.update_error = e.Message;
+                        return;
                     }
                 }
             }

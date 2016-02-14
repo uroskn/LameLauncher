@@ -251,6 +251,7 @@ namespace LameLauncher
                 {
                     MessageBox.Show("Update neuspešen. Zadnja napaka: " + updater.update_error + "\nZa dodatna pojasnila prosim kontaktiraj admine!");
                     Application.Exit();
+                    Environment.Exit(0);
                 }
                 return true;
             }
