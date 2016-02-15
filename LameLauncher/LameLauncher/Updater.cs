@@ -300,6 +300,12 @@ namespace LameLauncher
                         if ((progress) && (this.updwindow.update_error != ""))
                             throw new Exception(this.updwindow.update_error);
                     }
+                    if (commands[0] == "VERIFY")
+                    {
+                        this.UpdateStatus("Verifying file " + commands[1]);
+                        if (this.GetSHAHashFromFile(commands[1]) != commands[2])
+                            throw new Exception("Datoteka " + commands[1] + " zgleda da je bila nepričakovano spremenjena!");
+                    }
                     if (commands[0] == "EXTRACT")
                     {
                         this.UpdateStatus("Extractam file '" + commands[2] + "' iz '" + commands[1] + "' v '" + commands[3] + "'");
@@ -315,7 +321,7 @@ namespace LameLauncher
                                 break;
                             }
                         }
-                        if (!success) throw new Exception("File does not exists!");
+                        if (!success) throw new Exception("Datoteka " + commands[1] + "/" + commands[2] + " ne obstaja!");
                         zip.Close();
                     }
                     if (commands[0] == "ADD")

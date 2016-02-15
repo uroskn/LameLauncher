@@ -232,18 +232,6 @@ namespace LameLauncher
             {
                 upd.updwindow = null;
                 upd.DownloadFile("update", null, false);
-                // There apprently is a new update!
-                // Check if minecraft.jar was tampered with
-                if (config.GetValue("minecrafthash", "") != "")
-                {
-                    if (upd.GetSHAHashFromFile("meinkraft.jar") != config.GetValue("minecrafthash", ""))
-                    {
-                        MessageBox.Show("Poskusal zagnati update, ampak zgleda, da je nekdo spreminjal meinkraft.jar!\n\n" +
-                                        "Prekinjam update, updejtaj na roke, kakor ves in znas!");
-                        Application.Exit();
-                        Environment.Exit(0);
-                    }
-                }
                 UpdateWindow updater = new UpdateWindow();
                 updater.upd = upd;
                 upd.updwindow = updater;
