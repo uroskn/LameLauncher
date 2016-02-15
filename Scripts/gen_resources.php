@@ -18,8 +18,12 @@
   
   printl("Downloading version json ({$argv[1]})... ");
   $version = $argv[1];
-  $resource = json_decode(file_get_contents("http://s3.amazonaws.com/Minecraft.Download/versions/$version/$version.json"), true);
-  $assets = $resource["assets"];
+  if ($version != "legacy") 
+  {
+    $resource = json_decode(file_get_contents("http://s3.amazonaws.com/Minecraft.Download/versions/$version/$version.json"), true);
+    $assets = $resource["assets"];
+  }
+  else $assets = "legacy";
   if (!$assets) die("Unable to extract assets\n");
   printl("Assets version: $assets\n");
   
